@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- saved from url=(0048)file:///C:/Users/gary/Downloads/index%20(3).html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>McMonagle Deliveries</title>
-<link href="./index_files/css2" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --stone: #8c7b6b; --stone-dark: #5c4f43; --stone-light: #c9bdb3;
@@ -12,15 +12,17 @@
     --success: #4a7c59; --danger: #b84040; --shadow: 0 4px 24px rgba(42,37,32,0.15);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: 'Barlow', sans-serif; background: var(--cream); color: var(--charcoal); min-height: 100vh; display: flex; flex-direction: column; }
+  body { font-family: "Barlow", sans-serif; background: var(--cream); color: var(--charcoal); min-height: 100vh; display: flex; flex-direction: column; }
   header { background: var(--charcoal); padding: 14px 20px; display: flex; align-items: center; gap: 14px; position: sticky; top: 0; z-index: 10; }
   .logo-mark { height: 44px; display: flex; align-items: center; flex-shrink: 0; }
   .logo-mark img { height: 44px; width: auto; display: block; }
   header p { font-size: 0.7rem; color: var(--stone-light); letter-spacing: 0.08em; text-transform: uppercase; margin: 0; }
   main { flex: 1; padding: 20px 16px; display: flex; flex-direction: column; gap: 16px; max-width: 480px; width: 100%; margin: 0 auto; }
+
+  /* STEPS */
   .steps { display: flex; align-items: center; background: white; border: 1px solid rgba(140,123,107,0.2); padding: 14px 16px; box-shadow: var(--shadow); }
   .step { display: flex; align-items: center; gap: 7px; flex: 1; }
-  .step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--stone-light); color: var(--stone-dark); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.3s; }
+  .step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--stone-light); color: var(--stone-dark); font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.3s; }
   .step-num.active { background: var(--accent); color: white; }
   .step-num.done { background: var(--success); color: white; }
   .step-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--stone); transition: color 0.3s; }
@@ -28,66 +30,73 @@
   .step-label.done { color: var(--success); }
   .step-line { height: 2px; background: var(--stone-light); flex: 1; margin: 0 4px; transition: background 0.3s; }
   .step-line.done { background: var(--success); }
+
+  /* CARDS */
   .card { background: white; border: 1px solid rgba(140,123,107,0.2); box-shadow: var(--shadow); }
   .card-header { background: var(--charcoal); padding: 12px 18px; display: flex; align-items: center; gap: 10px; }
-  .card-header .num { width: 22px; height: 22px; background: var(--accent); color: white; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .card-header h2 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream); }
+  .card-header .num { width: 22px; height: 22px; background: var(--accent); color: white; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .card-header h2 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream); }
   .card-body { padding: 18px; }
   label.field-label { display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); margin-bottom: 8px; }
-  input[type="text"] { width: 100%; padding: 14px 16px; font-family: 'Barlow Condensed', sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 0.1em; border: 2px solid var(--stone-light); background: var(--cream); color: var(--charcoal); outline: none; transition: border-color 0.2s; text-transform: uppercase; -webkit-appearance: none; }
+  input[type="text"] { width: 100%; padding: 14px 16px; font-family: "Barlow Condensed", sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 0.1em; border: 2px solid var(--stone-light); background: var(--cream); color: var(--charcoal); outline: none; transition: border-color 0.2s; text-transform: uppercase; -webkit-appearance: none; }
   input[type="text"]:focus { border-color: var(--accent); }
   input[type="text"].valid { border-color: var(--success); }
   .helper { font-size: 0.76rem; color: var(--stone); line-height: 1.4; margin-top: 8px; }
-  .photo-types { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-  .type-btn { border: 2px solid var(--stone-light); background: var(--cream); padding: 16px 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: all 0.2s; }
-  .type-btn:active { transform: scale(0.97); }
-  .type-btn.selected { border-color: var(--accent); background: rgba(200,115,58,0.07); }
-  .type-btn svg { width: 38px; height: 38px; stroke: var(--stone); transition: stroke 0.2s; }
-  .type-btn.selected svg { stroke: var(--accent); }
-  .type-btn span { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.88rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--stone-dark); text-align: center; line-height: 1.2; }
-  .type-btn.selected span { color: var(--accent); }
-  .camera-area { position: relative; background: #1a1614; min-height: 230px; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; border: 2px dashed var(--stone); transition: border-color 0.2s; }
+
+  /* PHOTO SECTIONS */
+  .photo-section { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--stone-light); }
+  .photo-section:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .photo-section-title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--charcoal); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .photo-section-title .badge { font-size: 0.65rem; padding: 2px 8px; border-radius: 20px; font-weight: 600; letter-spacing: 0.06em; }
+  .badge-optional { background: var(--cream); color: var(--stone); border: 1px solid var(--stone-light); }
+  .badge-ready { background: #EAF3DE; color: #27500A; }
+
+  .camera-area { position: relative; background: #1a1614; min-height: 180px; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; border: 2px dashed var(--stone); transition: border-color 0.2s; }
   .camera-area.has-photo { border-style: solid; border-color: var(--success); }
-  .camera-area.ready { border-color: var(--accent); border-style: solid; }
   .camera-area img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-  .cam-placeholder { display: flex; flex-direction: column; align-items: center; gap: 10px; color: var(--stone-light); padding: 30px; text-align: center; position: relative; z-index: 1; }
-  .cam-placeholder svg { width: 52px; height: 52px; stroke: var(--stone); opacity: 0.5; }
-  .cam-placeholder p { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--stone-light); opacity: 0.8; }
-  .cam-placeholder small { font-size: 0.75rem; opacity: 0.5; line-height: 1.4; }
-  .preview-badge { position: absolute; top: 10px; left: 10px; background: var(--success); color: white; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; z-index: 2; }
-  #photo-input { display: none; }
-  .btn { width: 100%; padding: 16px; border: none; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.15rem; letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; -webkit-tap-highlight-color: transparent; margin-top: 10px; }
+  .cam-placeholder { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--stone-light); padding: 24px; text-align: center; position: relative; z-index: 1; }
+  .cam-placeholder svg { width: 44px; height: 44px; stroke: var(--stone); opacity: 0.5; }
+  .cam-placeholder p { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--stone-light); opacity: 0.8; }
+  .cam-placeholder small { font-size: 0.72rem; opacity: 0.5; line-height: 1.4; }
+  .preview-badge { position: absolute; top: 8px; left: 8px; background: var(--success); color: white; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; z-index: 2; }
+
+  /* BUTTONS */
+  .btn { width: 100%; padding: 13px; border: none; cursor: pointer; font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: 1.05rem; letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; -webkit-tap-highlight-color: transparent; margin-top: 8px; }
   .btn:active:not(:disabled) { transform: scale(0.98); }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .btn-primary { background: var(--accent); color: white; }
-  .btn-outline { background: transparent; color: var(--stone-dark); border: 2px solid var(--stone-light); margin-top: 8px; font-size: 0.9rem; }
-  .btn-send { background: var(--success); color: white; font-size: 1.35rem; padding: 20px; }
+  .btn-outline { background: transparent; color: var(--stone-dark); border: 2px solid var(--stone-light); font-size: 0.88rem; }
+  .btn-send { background: var(--success); color: white; font-size: 1.35rem; padding: 20px; margin-top: 0; }
   .send-card .card-body { padding: 20px 18px; }
   .send-summary { background: var(--cream); border: 1px solid rgba(140,123,107,0.25); margin-bottom: 16px; }
   .summary-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid rgba(140,123,107,0.2); }
   .summary-row:last-child { border-bottom: none; }
   .s-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--stone); }
-  .s-value { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.05rem; color: var(--charcoal); letter-spacing: 0.04em; }
+  .s-value { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.05rem; color: var(--charcoal); letter-spacing: 0.04em; }
   .s-value.ok { color: var(--success); }
   .s-value.waiting { color: var(--stone-light); }
+
   .sending-overlay { display: none; position: fixed; inset: 0; background: rgba(42,37,32,0.85); z-index: 100; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
   .sending-overlay.active { display: flex; }
   .spinner { width: 56px; height: 56px; border: 4px solid rgba(255,255,255,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .sending-overlay p { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.2rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream); }
+  .sending-overlay p { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.2rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream); }
+
   .success-screen { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; text-align: center; gap: 16px; flex: 1; }
   .success-screen.visible { display: flex; }
   .success-icon { width: 88px; height: 88px; background: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
   @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
   .success-icon svg { width: 44px; height: 44px; stroke: white; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-  .success-screen h2 { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 2rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--charcoal); }
+  .success-screen h2 { font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: 2rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--charcoal); }
   .success-screen p { color: var(--stone); font-size: 0.95rem; line-height: 1.6; max-width: 300px; }
-  .success-order { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.4rem; color: var(--charcoal); letter-spacing: 0.08em; background: var(--cream); border: 2px solid var(--stone-light); padding: 10px 24px; margin: 4px 0; }
-  .btn-new { padding: 16px 40px; background: var(--accent); color: white; border: none; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.1rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
+  .success-order { font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: 1.4rem; color: var(--charcoal); letter-spacing: 0.08em; background: var(--cream); border: 2px solid var(--stone-light); padding: 10px 24px; margin: 4px 0; }
+  .btn-new { padding: 16px 40px; background: var(--accent); color: white; border: none; font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: 1.1rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
   .btn-new:active { transform: scale(0.97); }
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(90px); background: var(--danger); color: white; padding: 14px 22px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.06em; text-transform: uppercase; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); z-index: 999; max-width: 88vw; text-align: center; line-height: 1.3; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(90px); background: var(--danger); color: white; padding: 14px 22px; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.06em; text-transform: uppercase; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); z-index: 999; max-width: 88vw; text-align: center; line-height: 1.3; }
   .toast.show { transform: translateX(-50%) translateY(0); }
   .hidden { display: none !important; }
+  input[type="file"] { display: none; }
 </style>
 </head>
 <body>
@@ -111,7 +120,7 @@
     <div class="step-line" id="ln1"></div>
     <div class="step">
       <div class="step-num" id="sn2">2</div>
-      <span class="step-label" id="sl2">Photo</span>
+      <span class="step-label" id="sl2">Photos</span>
     </div>
     <div class="step-line" id="ln2"></div>
     <div class="step">
@@ -120,6 +129,7 @@
     </div>
   </div>
 
+  <!-- CARD 1: ORDER NUMBER -->
   <div class="card">
     <div class="card-header"><div class="num">1</div><h2>Order Number</h2></div>
     <div class="card-body">
@@ -129,37 +139,61 @@
     </div>
   </div>
 
+  <!-- CARD 2: PHOTOS -->
   <div class="card">
-    <div class="card-header"><div class="num">2</div><h2>Delivery Photo</h2></div>
+    <div class="card-header"><div class="num">2</div><h2>Delivery Photos</h2></div>
     <div class="card-body">
-      <div class="photo-types">
-        <button class="type-btn" id="btn-signed" onclick="selectType(&#39;signed&#39;)">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-          <span>Signed Docket</span>
-        </button>
-        <button class="type-btn" id="btn-unattended" onclick="selectType(&#39;unattended&#39;)">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M9 21V9"></path></svg>
-          <span>Items on Site</span>
-        </button>
-      </div>
-      <div class="camera-area" id="camera-area" onclick="triggerCamera()">
-        <div class="cam-placeholder" id="cam-ph">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-          <p id="ph-text">Select a type above first</p>
-          <small id="ph-sub">Then tap here to open your camera</small>
+
+      <!-- SIGNED DOCKET -->
+      <div class="photo-section">
+        <div class="photo-section-title">
+          Signed Docket
+          <span class="badge badge-optional" id="badge-signed">Optional</span>
         </div>
-        <div class="preview-badge hidden" id="prev-badge">✓ Photo Ready</div>
-        <img id="photo-preview" class="hidden" alt="Delivery photo">
+        <div class="camera-area" id="area-signed" onclick="triggerCamera('signed')">
+          <div class="cam-placeholder" id="ph-signed">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <p>Photo of signed docket</p>
+            <small>Tap here to open camera</small>
+          </div>
+          <div class="preview-badge hidden" id="badge-signed-ready">✓ Ready</div>
+          <img id="preview-signed" class="hidden" alt="Signed docket">
+        </div>
+        <input type="file" id="input-signed" accept="image/*" capture="environment">
+        <button class="btn btn-primary" id="btn-signed" onclick="triggerCamera('signed')">
+          <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4" fill="white"/></svg>
+          Take Photo of Signed Docket
+        </button>
+        <button class="btn btn-outline hidden" id="retake-signed" onclick="retakePhoto('signed')">↺ Retake</button>
       </div>
-      <input type="file" id="photo-input" accept="image/*" capture="environment">
-      <button class="btn btn-primary" id="btn-capture" disabled="" onclick="triggerCamera()">
-        <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"></path><circle cx="12" cy="13" r="4" fill="white"></circle></svg>
-        Take Photo
-      </button>
-      <button class="btn btn-outline hidden" id="btn-retake" onclick="retakePhoto()">↺ Retake Photo</button>
+
+      <!-- ITEMS ON SITE -->
+      <div class="photo-section">
+        <div class="photo-section-title">
+          Items on Site
+          <span class="badge badge-optional" id="badge-unattended">Optional</span>
+        </div>
+        <div class="camera-area" id="area-unattended" onclick="triggerCamera('unattended')">
+          <div class="cam-placeholder" id="ph-unattended">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            <p>Photo of items on site</p>
+            <small>Tap here to open camera</small>
+          </div>
+          <div class="preview-badge hidden" id="badge-unattended-ready">✓ Ready</div>
+          <img id="preview-unattended" class="hidden" alt="Items on site">
+        </div>
+        <input type="file" id="input-unattended" accept="image/*" capture="environment">
+        <button class="btn btn-primary" id="btn-unattended" onclick="triggerCamera('unattended')">
+          <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4" fill="white"/></svg>
+          Take Photo of Items on Site
+        </button>
+        <button class="btn btn-outline hidden" id="retake-unattended" onclick="retakePhoto('unattended')">↺ Retake</button>
+      </div>
+
     </div>
   </div>
 
+  <!-- CARD 3: SEND -->
   <div class="card send-card">
     <div class="card-header"><div class="num">3</div><h2>Confirm &amp; Send</h2></div>
     <div class="card-body">
@@ -169,16 +203,16 @@
           <span class="s-value waiting" id="sum-order">—</span>
         </div>
         <div class="summary-row">
-          <span class="s-label">Photo Type</span>
-          <span class="s-value waiting" id="sum-type">—</span>
+          <span class="s-label">Signed Docket</span>
+          <span class="s-value waiting" id="sum-signed">Not taken</span>
         </div>
         <div class="summary-row">
-          <span class="s-label">Photo</span>
-          <span class="s-value waiting" id="sum-photo">Not taken</span>
+          <span class="s-label">Items on Site</span>
+          <span class="s-value waiting" id="sum-unattended">Not taken</span>
         </div>
       </div>
-      <button class="btn btn-send" id="btn-send" disabled="" onclick="sendDelivery()">
-        <svg viewBox="0 0 24 24" fill="white" width="26" height="26"><path d="M22 2L11 13"></path><path d="M22 2L15 22l-4-9-9-4 20-7z"></path></svg>
+      <button class="btn btn-send" id="btn-send" disabled onclick="sendDelivery()">
+        <svg viewBox="0 0 24 24" fill="white" width="26" height="26"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
         Send to Head Office
       </button>
     </div>
@@ -187,10 +221,10 @@
 </main>
 
 <div class="success-screen" id="success-screen">
-  <div class="success-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+  <div class="success-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
   <h2>Delivery Sent!</h2>
   <div class="success-order" id="success-order-num"></div>
-  <p>Photo and confirmation emailed to head office automatically.</p>
+  <p>Photos and confirmation emailed to head office automatically.</p>
   <button class="btn-new" onclick="resetApp()">+ Next Delivery</button>
 </div>
 
@@ -202,85 +236,75 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  let selectedType = null;
-  let capturedBlob = null;
+  let blobs = { signed: null, unattended: null };
 
-  const orderInput   = document.getElementById('order-num');
-  const photoInput   = document.getElementById('photo-input');
-  const photoPreview = document.getElementById('photo-preview');
-  const camPh        = document.getElementById('cam-ph');
-  const prevBadge    = document.getElementById('prev-badge');
-  const btnCapture   = document.getElementById('btn-capture');
-  const btnRetake    = document.getElementById('btn-retake');
-  const cameraArea   = document.getElementById('camera-area');
+  const orderInput = document.getElementById('order-num');
 
   orderInput.addEventListener('input', () => {
     orderInput.classList.toggle('valid', orderInput.value.trim().length > 2);
     updateSummary(); updateSteps();
   });
 
-  function selectType(type) {
-    selectedType = type;
-    document.getElementById('btn-signed').classList.toggle('selected', type === 'signed');
-    document.getElementById('btn-unattended').classList.toggle('selected', type === 'unattended');
-    document.getElementById('ph-text').textContent = type === 'signed' ? 'Photograph the signed docket' : 'Photograph items left on site';
-    document.getElementById('ph-sub').textContent = 'Tap here to open your camera';
-    btnCapture.disabled = false;
-    if (!capturedBlob) cameraArea.classList.add('ready');
-    updateSummary(); updateSteps();
+  function triggerCamera(type) {
+    document.getElementById('input-' + type).click();
   }
 
-  function triggerCamera() {
-    if (!selectedType) { showToast('Choose Signed Docket or Items on Site first'); return; }
-    photoInput.click();
-  }
-
-  photoInput.addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    capturedBlob = file;
-    photoPreview.src = URL.createObjectURL(file);
-    photoPreview.classList.remove('hidden');
-    camPh.classList.add('hidden');
-    prevBadge.classList.remove('hidden');
-    btnCapture.classList.add('hidden');
-    btnRetake.classList.remove('hidden');
-    cameraArea.classList.remove('ready');
-    cameraArea.classList.add('has-photo');
-    updateSummary(); updateSteps();
+  ['signed','unattended'].forEach(type => {
+    document.getElementById('input-' + type).addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      blobs[type] = file;
+      const preview = document.getElementById('preview-' + type);
+      preview.src = URL.createObjectURL(file);
+      preview.classList.remove('hidden');
+      document.getElementById('ph-' + type).classList.add('hidden');
+      document.getElementById('badge-' + type + '-ready').classList.remove('hidden');
+      document.getElementById('area-' + type).classList.add('has-photo');
+      document.getElementById('btn-' + type).classList.add('hidden');
+      document.getElementById('retake-' + type).classList.remove('hidden');
+      document.getElementById('badge-' + type).textContent = '✓ Ready';
+      document.getElementById('badge-' + type).className = 'badge badge-ready';
+      updateSummary(); updateSteps();
+    });
   });
 
-  function retakePhoto() {
-    capturedBlob = null;
-    photoPreview.classList.add('hidden');
-    photoPreview.src = '';
-    prevBadge.classList.add('hidden');
-    camPh.classList.remove('hidden');
-    btnCapture.classList.remove('hidden');
-    btnRetake.classList.add('hidden');
-    cameraArea.classList.remove('has-photo');
-    if (selectedType) cameraArea.classList.add('ready');
-    photoInput.value = '';
+  function retakePhoto(type) {
+    blobs[type] = null;
+    const preview = document.getElementById('preview-' + type);
+    preview.classList.add('hidden');
+    preview.src = '';
+    document.getElementById('ph-' + type).classList.remove('hidden');
+    document.getElementById('badge-' + type + '-ready').classList.add('hidden');
+    document.getElementById('area-' + type).classList.remove('has-photo');
+    document.getElementById('btn-' + type).classList.remove('hidden');
+    document.getElementById('retake-' + type).classList.add('hidden');
+    document.getElementById('badge-' + type).textContent = 'Optional';
+    document.getElementById('badge-' + type).className = 'badge badge-optional';
+    document.getElementById('input-' + type).value = '';
     updateSummary(); updateSteps();
   }
 
   function updateSummary() {
     const ord = orderInput.value.trim().toUpperCase();
     const sumOrd = document.getElementById('sum-order');
-    const sumTyp = document.getElementById('sum-type');
-    const sumPho = document.getElementById('sum-photo');
+    const sumSig = document.getElementById('sum-signed');
+    const sumUna = document.getElementById('sum-unattended');
+
     sumOrd.textContent = ord || '—';
     sumOrd.className = 's-value ' + (ord.length > 2 ? 'ok' : 'waiting');
-    sumTyp.textContent = selectedType === 'signed' ? 'Signed Docket' : selectedType === 'unattended' ? 'Items on Site' : '—';
-    sumTyp.className = 's-value ' + (selectedType ? 'ok' : 'waiting');
-    sumPho.textContent = capturedBlob ? '✓ Ready' : 'Not taken';
-    sumPho.className = 's-value ' + (capturedBlob ? 'ok' : 'waiting');
-    document.getElementById('btn-send').disabled = !(ord.length > 2 && selectedType && capturedBlob);
+    sumSig.textContent = blobs.signed ? '✓ Ready' : 'Not taken';
+    sumSig.className = 's-value ' + (blobs.signed ? 'ok' : 'waiting');
+    sumUna.textContent = blobs.unattended ? '✓ Ready' : 'Not taken';
+    sumUna.className = 's-value ' + (blobs.unattended ? 'ok' : 'waiting');
+
+    // At least one photo required
+    const hasPhoto = blobs.signed || blobs.unattended;
+    document.getElementById('btn-send').disabled = !(ord.length > 2 && hasPhoto);
   }
 
   function updateSteps() {
     const hasOrder = orderInput.value.trim().length > 2;
-    const hasPhoto = !!capturedBlob;
+    const hasPhoto = !!(blobs.signed || blobs.unattended);
     setStep(1, hasOrder ? 'done' : 'active');
     setStep(2, hasPhoto ? 'done' : (hasOrder ? 'active' : ''));
     setStep(3, hasPhoto && hasOrder ? 'active' : '');
@@ -299,15 +323,16 @@
   async function sendDelivery() {
     const order = orderInput.value.trim();
     if (!order || order.length < 2) { showToast('Enter an order number'); return; }
-    if (!selectedType) { showToast('Choose a photo type'); return; }
-    if (!capturedBlob) { showToast('Take a photo first'); return; }
+    if (!blobs.signed && !blobs.unattended) { showToast('Take at least one photo'); return; }
+
     document.getElementById('sending-overlay').classList.add('active');
     try {
       const formData = new FormData();
       formData.append('orderNumber', order.toUpperCase());
-      formData.append('photoType',   selectedType);
-      formData.append('timestamp',   new Date().toLocaleString('en-IE'));
-      formData.append('photo',       capturedBlob, `delivery-${order}.jpg`);
+      formData.append('timestamp', new Date().toLocaleString('en-IE'));
+      if (blobs.signed)     formData.append('photoSigned',     blobs.signed,     'signed-docket.jpg');
+      if (blobs.unattended) formData.append('photoUnattended', blobs.unattended, 'items-on-site.jpg');
+
       const res  = await fetch('/send-delivery', { method: 'POST', body: formData });
       const data = await res.json();
       document.getElementById('sending-overlay').classList.remove('active');
@@ -327,15 +352,8 @@
   function resetApp() {
     orderInput.value = '';
     orderInput.classList.remove('valid');
-    selectedType = null;
-    capturedBlob = null;
-    document.getElementById('btn-signed').classList.remove('selected');
-    document.getElementById('btn-unattended').classList.remove('selected');
-    document.getElementById('ph-text').textContent = 'Select a type above first';
-    document.getElementById('ph-sub').textContent  = 'Then tap here to open your camera';
-    retakePhoto();
-    btnCapture.disabled = true;
-    cameraArea.classList.remove('ready', 'has-photo');
+    retakePhoto('signed');
+    retakePhoto('unattended');
     document.getElementById('success-screen').classList.remove('visible');
     document.getElementById('main-flow').style.display = '';
     document.getElementById('btn-send').disabled = true;
@@ -343,7 +361,7 @@
     document.getElementById('ln1').classList.remove('done');
     document.getElementById('ln2').classList.remove('done');
     updateSummary();
-    window.scrollTo(0, 0);
+    window.scrollTo(0,0);
   }
 
   function showToast(msg) {
@@ -355,6 +373,5 @@
 
   updateSummary();
 </script>
-
-
-</body></html>
+</body>
+</html>
