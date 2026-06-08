@@ -1,4 +1,5 @@
 const express = require('express');
+const nodemailer = require('nodemailer');
 const multer  = require('multer');
 const path    = require('path');
 const cors    = require('cors');
@@ -7,15 +8,12 @@ require('dotenv').config();
 
 const app    = express();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
-const uploadFields = upload.any();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-async function sendViaSendGrid(toEmail, fromEmail, subject, htmlBody, textBody, attachmentBuffer, attachmentName, mimeType) {
-  const attachmentB64 = attachmentBuffer.toString('base64');
-
+async function sendViaSendGrid(toEmail, fromEmail, subject, htmlBody, textBody, attachments) {
   const payload = JSON.stringify({
     personalizations: [{ to: [{ email: toEmail }] }],
     from: { email: fromEmail, name: 'McMonagle Deliveries' },
@@ -24,12 +22,7 @@ async function sendViaSendGrid(toEmail, fromEmail, subject, htmlBody, textBody, 
       { type: 'text/plain', value: textBody },
       { type: 'text/html',  value: htmlBody  }
     ],
-    attachments: [{
-      content:     attachmentB64,
-      filename:    attachmentName,
-      type:        mimeType,
-      disposition: 'attachment'
-    }]
+    attachments: attachments
   });
 
   return new Promise((resolve, reject) => {
@@ -60,21 +53,29 @@ async function sendViaSendGrid(toEmail, fromEmail, subject, htmlBody, textBody, 
   });
 }
 
-app.post('/send-delivery', uploadFields, async (req, res) => {
+app.post('/send-delivery', upload.any(), async (req, res) => {
   try {
     const { orderNumber, timestamp } = req.body;
-    const allFiles = req.files || [];
-    const photoSigned     = allFiles.find(f => f.fieldname === 'photoSigned')     || null;
-    const photoUnattended = allFiles.find(f => f.fieldname === 'photoUnattended') || null;
-    const photoSingle     = allFiles.find(f => f.fieldname === 'photo')           || allFiles[0] || null;
-    const anyPhoto = photoSigned || photoUnattended || photoSingle;
-    if (!orderNumber || !anyPhoto) return res.status(400).json({ ok: false, error: 'Missing order number or photo.' });
+    const files = req.files || [];
+
+    console.log(`Received ${files.length} files, orderNumber: ${orderNumber}`);
+    files.forEach(f => console.log(`  File: ${f.fieldname}, size: ${f.size}`));
+
+    if (!orderNumber || files.length === 0) {
+      return res.status(400).json({ ok: false, error: 'Missing order number or photo.' });
+    }
 
     const deliveryTime = timestamp || new Date().toLocaleString('en-IE');
-    const photoTypes   = [photoSigned ? 'Signed Docket' : null, photoUnattended ? 'Items on Site' : null, photoSingle ? 'Delivery Photo' : null].filter(Boolean).join(' + ') || 'Delivery Photo';
+    const ts = Date.now();
+
+    const photoTypes = files.map(f => {
+      if (f.fieldname === 'photoSigned')     return 'Signed Docket';
+      if (f.fieldname === 'photoUnattended') return 'Items on Site';
+      return 'Delivery Photo';
+    }).join(' + ');
 
     const subject  = `Delivery Confirmed — Order ${orderNumber.toUpperCase()} — ${photoTypes}`;
-    const textBody = `DELIVERY CONFIRMATION\n${'='.repeat(40)}\n\nOrder Number : ${orderNumber.toUpperCase()}\nPhoto Type   : ${photoTypes}\nDate / Time  : ${deliveryTime}\n\nDelivery photo attached.\n\n— McMonagle Deliveries`;
+    const textBody = `DELIVERY CONFIRMATION\n${'='.repeat(40)}\n\nOrder Number : ${orderNumber.toUpperCase()}\nPhotos       : ${photoTypes}\nDate / Time  : ${deliveryTime}\n\nDelivery photo(s) attached.\n\n— McMonagle Deliveries`;
     const htmlBody = `
       <div style="font-family:sans-serif;max-width:540px;margin:0 auto;">
         <div style="background:#2a2520;padding:20px 24px;">
@@ -88,7 +89,7 @@ app.post('/send-delivery', uploadFields, async (req, res) => {
               <td style="padding:10px 0;border-bottom:1px solid #c9bdb3;font-size:18px;font-weight:700;color:#2a2520;">${orderNumber.toUpperCase()}</td>
             </tr>
             <tr>
-              <td style="padding:10px 0;border-bottom:1px solid #c9bdb3;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#8c7b6b;">Photo Type</td>
+              <td style="padding:10px 0;border-bottom:1px solid #c9bdb3;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#8c7b6b;">Photos</td>
               <td style="padding:10px 0;border-bottom:1px solid #c9bdb3;font-size:15px;font-weight:600;color:#2a2520;">${photoTypes}</td>
             </tr>
             <tr>
@@ -96,21 +97,27 @@ app.post('/send-delivery', uploadFields, async (req, res) => {
               <td style="padding:10px 0;font-size:15px;color:#2a2520;">${deliveryTime}</td>
             </tr>
           </table>
-          <p style="margin:20px 0 0;font-size:12px;color:#8c7b6b;">Delivery photo attached — see below.</p>
+          <p style="margin:20px 0 0;font-size:12px;color:#8c7b6b;">Delivery photo(s) attached — see below.</p>
         </div>
         <div style="background:#5c4f43;padding:12px 24px;text-align:center;">
           <p style="color:#c9bdb3;font-size:11px;margin:0;letter-spacing:1px;">McMonagle Stone Delivery System</p>
         </div>
       </div>`;
 
+    const attachments = files.map((f, i) => ({
+      content:     f.buffer.toString('base64'),
+      filename:    `delivery-${orderNumber.toUpperCase()}-${ts}-${i+1}.jpg`,
+      type:        f.mimetype,
+      disposition: 'attachment'
+    }));
+
     await sendViaSendGrid(
       process.env.HEAD_OFFICE_EMAIL,
       process.env.SENDGRID_FROM_EMAIL,
-      subject, htmlBody, textBody,
-      req.file.buffer, fileName, req.file.mimetype
+      subject, htmlBody, textBody, attachments
     );
 
-    console.log(`✓ Email sent via SendGrid | Order: ${orderNumber} | Photos: ${photoTypes}`);
+    console.log(`✓ Email sent | Order: ${orderNumber} | Photos: ${photoTypes}`);
     res.json({ ok: true });
 
   } catch (err) {
