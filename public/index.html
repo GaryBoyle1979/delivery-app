@@ -1,1 +1,377 @@
-hello
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>McMonagle Deliveries</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --stone: #8c7b6b; --stone-dark: #5c4f43; --stone-light: #c9bdb3;
+    --cream: #f5f0eb; --charcoal: #2a2520; --accent: #c8733a;
+    --success: #4a7c59; --danger: #b84040; --shadow: 0 4px 24px rgba(42,37,32,0.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: "Barlow", sans-serif; background: var(--cream); color: var(--charcoal); min-height: 100vh; display: flex; flex-direction: column; }
+  header { background: var(--charcoal); padding: 14px 20px; display: flex; align-items: center; gap: 14px; position: sticky; top: 0; z-index: 10; }
+  .logo-mark { height: 44px; display: flex; align-items: center; flex-shrink: 0; }
+  .logo-mark img { height: 44px; width: auto; display: block; }
+  header p { font-size: 0.7rem; color: var(--stone-light); letter-spacing: 0.08em; text-transform: uppercase; margin: 0; }
+  main { flex: 1; padding: 20px 16px; display: flex; flex-direction: column; gap: 16px; max-width: 480px; width: 100%; margin: 0 auto; }
+
+  /* STEPS */
+  .steps { display: flex; align-items: center; background: white; border: 1px solid rgba(140,123,107,0.2); padding: 14px 16px; box-shadow: var(--shadow); }
+  .step { display: flex; align-items: center; gap: 7px; flex: 1; }
+  .step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--stone-light); color: var(--stone-dark); font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.3s; }
+  .step-num.active { background: var(--accent); color: white; }
+  .step-num.done { background: var(--success); color: white; }
+  .step-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--stone); transition: color 0.3s; }
+  .step-label.active { color: var(--accent); }
+  .step-label.done { color: var(--success); }
+  .step-line { height: 2px; background: var(--stone-light); flex: 1; margin: 0 4px; transition: background 0.3s; }
+  .step-line.done { background: var(--success); }
+
+  /* CARDS */
+  .card { background: white; border: 1px solid rgba(140,123,107,0.2); box-shadow: var(--shadow); }
+  .card-header { background: var(--charcoal); padding: 12px 18px; display: flex; align-items: center; gap: 10px; }
+  .card-header .num { width: 22px; height: 22px; background: var(--accent); color: white; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .card-header h2 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream); }
+  .card-body { padding: 18px; }
+  label.field-label { display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); margin-bottom: 8px; }
+  input[type="text"] { width: 100%; padding: 14px 16px; font-family: "Barlow Condensed", sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 0.1em; border: 2px solid var(--stone-light); background: var(--cream); color: var(--charcoal); outline: none; transition: border-color 0.2s; text-transform: uppercase; -webkit-appearance: none; }
+  input[type="text"]:focus { border-color: var(--accent); }
+  input[type="text"].valid { border-color: var(--success); }
+  .helper { font-size: 0.76rem; color: var(--stone); line-height: 1.4; margin-top: 8px; }
+
+  /* PHOTO SECTIONS */
+  .photo-section { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--stone-light); }
+  .photo-section:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .photo-section-title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--charcoal); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .photo-section-title .badge { font-size: 0.65rem; padding: 2px 8px; border-radius: 20px; font-weight: 600; letter-spacing: 0.06em; }
+  .badge-optional { background: var(--cream); color: var(--stone); border: 1px solid var(--stone-light); }
+  .badge-ready { background: #EAF3DE; color: #27500A; }
+
+  .camera-area { position: relative; background: #1a1614; min-height: 180px; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; border: 2px dashed var(--stone); transition: border-color 0.2s; }
+  .camera-area.has-photo { border-style: solid; border-color: var(--success); }
+  .camera-area img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+  .cam-placeholder { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--stone-light); padding: 24px; text-align: center; position: relative; z-index: 1; }
+  .cam-placeholder svg { width: 44px; height: 44px; stroke: var(--stone); opacity: 0.5; }
+  .cam-placeholder p { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--stone-light); opacity: 0.8; }
+  .cam-placeholder small { font-size: 0.72rem; opacity: 0.5; line-height: 1.4; }
+  .preview-badge { position: absolute; top: 8px; left: 8px; background: var(--success); color: white; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; z-index: 2; }
+
+  /* BUTTONS */
+  .btn { width: 100%; padding: 13px; border: none; cursor: pointer; font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: 1.05rem; letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; -webkit-tap-highlight-color: transparent; margin-top: 8px; }
+  .btn:active:not(:disabled) { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-outline { background: transparent; color: var(--stone-dark); border: 2px solid var(--stone-light); font-size: 0.88rem; }
+  .btn-send { background: var(--success); color: white; font-size: 1.35rem; padding: 20px; margin-top: 0; }
+  .send-card .card-body { padding: 20px 18px; }
+  .send-summary { background: var(--cream); border: 1px solid rgba(140,123,107,0.25); margin-bottom: 16px; }
+  .summary-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid rgba(140,123,107,0.2); }
+  .summary-row:last-child { border-bottom: none; }
+  .s-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--stone); }
+  .s-value { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.05rem; color: var(--charcoal); letter-spacing: 0.04em; }
+  .s-value.ok { color: var(--success); }
+  .s-value.waiting { color: var(--stone-light); }
+
+  .sending-overlay { display: none; position: fixed; inset: 0; background: rgba(42,37,32,0.85); z-index: 100; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+  .sending-overlay.active { display: flex; }
+  .spinner { width: 56px; height: 56px; border: 4px solid rgba(255,255,255,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .sending-overlay p { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.2rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream); }
+
+  .success-screen { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; text-align: center; gap: 16px; flex: 1; }
+  .success-screen.visible { display: flex; }
+  .success-icon { width: 88px; height: 88px; background: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+  .success-icon svg { width: 44px; height: 44px; stroke: white; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .success-screen h2 { font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: 2rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--charcoal); }
+  .success-screen p { color: var(--stone); font-size: 0.95rem; line-height: 1.6; max-width: 300px; }
+  .success-order { font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: 1.4rem; color: var(--charcoal); letter-spacing: 0.08em; background: var(--cream); border: 2px solid var(--stone-light); padding: 10px 24px; margin: 4px 0; }
+  .btn-new { padding: 16px 40px; background: var(--accent); color: white; border: none; font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: 1.1rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
+  .btn-new:active { transform: scale(0.97); }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(90px); background: var(--danger); color: white; padding: 14px 22px; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.06em; text-transform: uppercase; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); z-index: 999; max-width: 88vw; text-align: center; line-height: 1.3; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .hidden { display: none !important; }
+  input[type="file"] { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">
+    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAyAL4DASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9Qr/XrTS7uKC5fyjIpKuR8v0PpV6OVJow8bq6NyGU5BrhfiL/AMftp/1zP86z9B1C40/RtTlgkKtG0JXPIGS2ePevG+vuFeVOa0R2ew5oKSe56bRXIaT4+huCsd9H5D/89U5X8R1FdVDcR3EQkikWWNujKcg16VKvTrK9N3OaUJQ0kiWikzWHqvi2x0rK7/Pm/wCecfOPqe1VUqwpLmm7CjGUnaKN2srUvEthpjbJJg8uceXHy3/1vxrmbHxXeazfTI2IYBBIRGvsp5Jrkof9ch9WGfzryK2ZfD7Jb9zshhm7872O6+KnxKsPhL4Fv/FOp2l5fWVm0KNb6eivO5klSJQisygnc479M/St3SPEFjrnh+z1uzuEk027tlu4p8/K0TKGDZ9MHNefftH/APJLxkZH9t6L/wCnS1rzabUn0fwZr/wcgke31GTW10LTfLyGXS7sNcCRPQRWwuowfW2FenKo4zae1vxLp4eNWjGa3u7+mmvyueyfCL4taR8Z/C0mv6Jb3lvYrdSWoF9GqO5TB3gKx+VgwIzg4PQV2F9drY2U9y4LJDG0jBepAGePyr5c0S4l03TZPCmnXEujabrfxHvNJnnsnMMkNskMkvlxuvKF/IWPcCCAxwQcGvU28CaT4B1y5Gk6/PY2+oaRdK3hy7vZLhbl02n7REJZCysgba+3hvMXdyASRqScb2CpQpqejsnsvL1/4B0nwk+K2j/GXwRZ+KNFiurazuGZPs98ipPEynGHCswGRhhgnKsp71U8O/GjQfE3xA8WeErVLpLvw1FFLe3kyotswcNwjbskqVYNkAAqRzivDfhF4uT4LeDNHvLqMvo2veBLHXLdAcF7+1s4YpolH96SI220dyj1g33g3VfCem/FPSgzzeIpPhxFdX0kJy8t5NPqMtwV9y7uF/AVn7aVl+J0PB0uaeujty/fr92x7xa/HS61yzfVPDvgHxJ4i8OAkx6vam1iS5QdZIIppklkX0IUbv4d1XPEnx+8LeG/hzYeOGN5f6Fd3MdrutLcmaJ2kMbb42IZTGysHXG4bSMEjFdp4WuNLufDGlzaKYjo8lpE1mYfuGEoNm3224r5omVbiPWZbcbtIn+LVl9l/uNhrZLgr7ees+f9rdVylOK3vcwpwpVW7xsk++//AAf6sfQvjL4iaX4L+Huo+MpvM1DR7KyN+TYbXaaILuzHkhTkcjkA+tS+PPG1n8PfCt3rt9BcXUMBjRLWzQPPcSSOsccUakgF2dlUAkckcivnX42Sn4WfCn4ieAbg7NBv9FvLzwzI33Y1CM09jn/pnnfGP+ebEDiI13fxe8UXN58UfCGgWnh7VPE1nooOvalbaUsRdXw8VmG82RF27xNJ1zugXjGaHVeq66feNYVe7J7O77XSt/w3qeseF/Fun+LvCOm+I7GQ/wBm39ol5G0mAVRl3Yb0I6EdiDXBWvx2utcs5NU8O/D/AMSeIvDq5MerWptYlukHWSCKWZJJF7g7RuH3c8V5RHq2rRfCL43eC49I1PRLu2sb7VdG0++EYufsd3HK5VBG7j5ZxcKMMSAU4HFe5W8+pTfDnw5L4AOkSW7WtuYDqJk8g2vlfLt8vnP3MdsZoU3PZ2JlShRbur3emvTfp11/MZJ8aPDreD9B8S2jXF/pmsalbaVAYY9skc804gAkVypXZISHH3htPBPFd1M4hhkkIyEUtgewr5avvFh8WfD+xdtP0iwnsfihp1lOdDQrb3Ey6hAZJuQCWZ2bJPUjNfUWof8AHjcf9c2/lVxm5JmdWioNK27Z5P4b/aCvfFmg2GtaT8LfGl7pd/CtxbXC/wBmqJI2GVbDXgIyPUV6tpd4+oabaXUtpNYSTRLI1rc7fNhJAJR9rMu4ZwdrEZHBPWvA/wBnjRfiLcfAzwJJpvi3w5Z2DaPbmC3uPDc88kabBhWkF8gY+4VfoK+hI9wjUOQz45IGATTpSlKKchYqEKdRwhbRvv8AqcH8Rv8Aj9s/9w/zrz7xx8R9P+FXw11zxFqtnc32nwT2kc0VmyiXa8hTcu7gkZzgkZx1FehfEX/j9tP9xv51418fPB8/jr4EeKdGtb/T9OuZ57LypdUuRbws4mBEe88BmPyrngkgZFfL1L/W5qKu7P8AI9TBQp1JUo1naLav6XNjwJ8QPC3xSsTdeENct9Y2p5ktlny7yAf7cLfN143DIPY11Fhql3pcpa3laJgeV7fQivym8ReE/F3wh8TRQ6rY6l4Z1m3bfBNlonyON8UinDDn7ykj3r334W/t1a7oqQaf4908eKdPT5f7Tt9sWoRr7n7k2P8AaAJ7tXHGyn7vuy/r5n1WM4fqRh7TCS9pD5X/AMn+B98+LtcvftK2yztHCYlZlTjJIyea5m4eOx0+fULy4hsNPgG6a+vJVihjHqzsQBXjX7SH7YGm/DHWINL0Pw/Jq+uTWFvdLcak2y1hSRAyZRTukbHVcqB6mvh/4i/F3xh8XNSW48S6zc6l837iyQ7LeL0EcS/KD2yBk9ya2xFvat1Hd9v6/Q48tyHEYqnGpK0IPr1fy/zsfon8P/2iPBPi74nHwd4ZuLjXbxrK4ll1SJfLs02ISVTd80hz3wF7gmu0t/8AXJ/vD+dfIv7FnwZ8T+EfijaeIfENtDoEFxpd2LSx1KYQ310CnLR25+faOpZgB6Zr66t/9en+8P50ql/3d1b+kefmFChhsRKnh5c0Ulre+v5HpfjTw3pfirw+9lrJK6fHNBeOwk8va0EyToS3YB41J9ga8Y1740fAGx+Jlr4tvvGWkyeJrKzbTkuLeV50WMsTz5YK7hucA54DsO9ea/8ABSzxpq2ieCfCmhWM0lvp+r3E73pjYr5giVNkbY6qTIWx3KD0r5M+A/wp8A/E+11WHxZ8RofBOsRuFsoLuJRDMpH3zI7KvXjbkHvnnj2sRi5RrexpRTfmdWXZNSqYH67iasoxd9Iq/k779ux+k3hPR/hj8WPCes23hzWLfXtPvNTbVp59Ovz59reMwdZFZSHhcFQV6dPQmsuTUvhX8MPE+oR+JviFDP4oa0+xSSeI9XjNzb27gN5aL8oQN8rEhcthck4GPlH4F/sr/GT4Y/EbQvFmgyaVd6ZDcqJ5bPVUaK8tC2JFwOGBXJGehAPUV6F+0t+xH40+Mnxe1jxXo+r6Ha6feRwKkV7NMso2RKhyFjYdVPetFVrSpc6pe92OZ4PBU8U6M8X+6aumu91o9z1TUPFX7P2q+GPB+g3fjnw/Np/hWS1l01W1iPcpt0CRhzu+cYAyDwe9dPo/xR+D+o/ECTVtP8daFeeIdXtrfRxDFqcbmZVlkaJFQHli8zDjrkCvyM8UaDP4U8Savot08ctzpt3NZyvESUZ43KMVyAcZU4yK+wvhX/wT98e+HvHHg7xRca34dew0/UrPU5I455/MaOOVJCqgwgbiBxkgZ71zUMXWrTtGmvM9XMMlwOBpKVXEu7TcV36n1zd/A3QPD9ncmy8T+IPCnhtd0s2l2GqeRZRKcl9hYFoV5JxG6AdsVxt98Zv2e9N0nQ/DMfjDSbXTtEu4LyzhsZZHiSWJ96EyKpDfNkkknJJJPNfKn7fXxy1Txd8S7vwRZ3bw+HdDKxzQxNhbm5IDMz+oTIUA9CGPerHwp/4J9a18R/hfZeK7rxPBo15qVuLqw09rQyqY2GYzJJvG3cMHhWwCOp4GksVOVSVPDQvY56eU0KWGhiMzxDhz7Jfm9/y+Z9zeINF+H/7TPw/m09r6y8TaBNIrefpt0GMUi85Dqco2CQR1wxB4Jqzq2reBfg/rOp65r2v2WhXniOWMvPqt4sYl8mMIqR7iMKoOcDu5Pevyn+HHxE8U/sz/ABYa4iaW3utMvGtNV0wSHy7lEYrJEw6Hodrdjgivqj/gpVqdvrXhD4aahaSebaXb3E8Ug/iRo4mU/iCKpY1SoyrKPvRM6mQzp46lgpVW6VS9mvS+3yR9XeG9S8C/E7xUvijw3r1jrmo6ZayadNLpd4sqCKZkfZKFJ7xArnp82Oprz3xN4Z+GHwx1FtFvPiZe+BLG4X7SPDaa8trB5bs2TEG/eRIzB+I2UZBxivz1/Zr+Ol38A/idZ62PMm0W5xa6raof9ZATywHd0PzD6EcbjXp3/BRLVLXXPjJ4d1KwnS6sLzwzazwXEZykiNPcMrA9wQQfxrP69GVD2qiuZPVHQuH6lLMFg5VHySV0/T/I+1bLwF8KdQ+E9w2jarb2ngmPUF1kajpV+EhtpoCv7xJVOFCGJSeeoJNYui+PvhDoepQ3n/C6mvvLDD7PfeKRNC+VK/MhbB65+oBryr4N/wDKOXxD/wBg7V//AEOWvh34Y+DYPiL4+0jw5daxb+H7e+dkfUroAxwbY2fLAso5246jrRVxTpuChBXkkTg8np4mNedetJKnJrvt1P0c0XUvgl4d0m00zTPjXPZafaRrDBbw+LtqRoowFUbuABX0R4RuLC68L6XLpeptrOnNbIbfUGn883CYGJDJ/GSOd3evzwj/AGCfD80ixx/Gzw68jkKqrAhJJ4AA+0da+/Phb4Kb4c/Dnw54XkuxfvpFjFZm5WPyxLsUDdtycZx0ya7sLKrK6qQUV5M8LNKWDpqLw1d1G97pr80jL+I3/H7af7h/nXz/APtYf8my+NP+vjT/AP0oWvpDxloN7q9zbPaxeYqKQ3zAd/c15D+0B8IfFPjv4H+JvDmi6etzq97NZvBC08cYYRzBm+ZmAGAO5rxq1Gq8ROSi7NPp5F5ZWp069BzkklJXv6nxf+yn481fxZ8RPDnw08RSx+JfBGqyyQyaTrEYuUg2wuwaBm+aIgr/AAEDnpmvavjT/wAE3Q32jUfhtqgQnLf2Jqj/ACj2jm6+wDg+7VzP7Nv7IPxT+Hvxw8J+I9d8Pw2mk2FxI9xMt/BIVBhkQHarknlh0FfoturtwuFVajbER1T67ntZxmrweN5suqLla1Ss4t63v0v+J8MfEr9iXxf8ZPitaajd3lr4d8PQ6VY2s11Iwnnd44VV1jjU44IIyzAdxmq/7Qnwx0X9jX4U6VqXw/gjXxNf6itlL4i1KFLm8RDFKx8osNsROwDKKDj3wa+8K+cP24Pg74r+M3w80PSvCWnpqV9a6qtzLG9xHCFjEMq5y7AHl14962r4SMKc5U1eT+/5HnYDNauIxNChi5pUY2Vtlouvf5nx/wDsSa1qHiL9pIahql9cajfTaVemW5u5Wlkc+X1LMSTX3Pbf8fEf+8P5180fsnfso/Ez4W/F6LXfEehQ2WmLp91AZVvoJTvdMKNquTyfavrOHwZq6yoxthhWBP7xPX614f1es1C8Xv29DqzzEYepjJSoyTjZbNW6nNftSQfCnxL4Zg8MfEvXrbQmuSbmwuHfZPE6/KZIzgj+LBBBBBr4tb9hu98a6ddat8L/ABxoXjnSIJWhJZmtpg4AbZjDLuww6svUV9r/ALUn7N9n+0N4Rt7ZbpdO1/TWaXTr1lygLAB43HXY2F5HIKg84IPw5D+yB+0L4CvrmHw/Y3kMc3yPc6JrkcEc4HTP71Gx/vKOtenjKcpVPepXXdbnZkeIhTwqVHFqnJPWM7cvy2f3M8w+H/xM8afs5/ECR7C7uLC7028aDUdJabME5jYrJFIoJVuhG7nHUHvX7K29wLuyjnUFVkjDgN1GRmvz3+CP/BPbxXfeLLPWPiU9rYaTBMLibTI7gXFxeMDnY7LlVUnqQxJGRxnI/Q9lGwgemK6Mup1adN+007I83iTFYTFYiDw7TaXvNbP/ADPxL+M3/JXPHX/Ydv8A/wBKJK/aTw6P+Kd03/r1i/8AQBX5u/Ej9hT4s+JPiB4p1aw0zTnstQ1S6uoGfUEVjHJMzKSOxwRxX6UaLbyWej2MEo2yxQRo4BzghQDUZfTnTlU51a7OjiXFYfFQw/sJqVk72e2x+P8A+1Vod1oH7Qvj22ugQ8upyXSZ7pKBKn/jriv1D/Z78W6Z4q+Bfg3VbGeNrZNIghl2sMQyRRhJEPoVZSPwrzX9rD9kO2+PSw67ol1DpXi61i8kSTg+RdxgkhJCMlSCThgD1IIPGPjdv2Mvj3o/2jTLPQJ2srg4kFnrNusE3bLKZRn/AIEK54xrYKrNxhzKXY9GrPA55g6MZ11SnTVnf9Ltdjzb9oDxJY+MvjR401fS3WfT7rU5mglj5WVQ20OPUNjI+tfTH7dmj3Ph34L/AAT0q8DLd2Nj9mmDdQ6W8Ctn8Qa6T9mr9gC+8N+JrLxR8SJbV3sZFntNDtH81TIDlWnfGCFPOxcgnGTjIPpH7cHwE8XfHLTfCUPhO2trmTTprh7gXFwsIAdUC4z1+6aiOFqrD1JSXvStp8zapm2ElmeFp05+5STXM9vhsfDngn4HTfET4B+KPF+kRvLrPhrUt1xAvPnWbRKWwP7yFS3HUFupxXmWreJtQ1zTdIsr2Yzw6VA1raFslkiMjSbM+gZ3I9N2OmK/Tj9if4E+Kvgj4T8T6d4stbaCfUL2OaFbedZgUEe05I6c18//ABs/4J++L7j4japd+ArOxl8NXj/aYIZrtYWtmYkvEAf4Qc49iB1BrnrYKoqUZwi7vdHp4PPsNLF1aOImuVO8ZdLW1V/66noHwb/5RyeIf+wdq/8A6HLXw58L/h7e/Fbx/pHhPTrm3tL3U3eOOa6LCNSsbOd20E9FPav0j+HPwM8V+G/2OdY+Hd9bW6eJri01CGOFLhWjLTNIU+fp/EPpXyRb/sDfGa1lWWHT9PhlX7rx6oisPoRW2Kw9STpPkbSSucOU5hhqccUnWjCUptpu3326nc+H/wDgm/460nXtMvpPEnh547W5inZVefJCuGIH7vrxX6LKcivy8/4Yf+O/pD/4Oh/jX37+zr4O1r4f/Bjwx4f8QgDWbGB0uds3mjcZHYfP34Ir0sClG8VTcV5nzGfSdVQqTxUazWmiSt9zPR6KKK9U+RCiiigApKKKAFooooASloooAKKKKACiiigBKWiigAooooAKKKKACiiigApKKKAP/9k=" alt="McMonagle Stone">
+  </div>
+  <div>
+    <p>McMonagle Deliveries</p>
+  </div>
+</header>
+
+<main id="main-flow">
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num active" id="sn1">1</div>
+      <span class="step-label active" id="sl1">Order</span>
+    </div>
+    <div class="step-line" id="ln1"></div>
+    <div class="step">
+      <div class="step-num" id="sn2">2</div>
+      <span class="step-label" id="sl2">Photos</span>
+    </div>
+    <div class="step-line" id="ln2"></div>
+    <div class="step">
+      <div class="step-num" id="sn3">3</div>
+      <span class="step-label" id="sl3">Send</span>
+    </div>
+  </div>
+
+  <!-- CARD 1: ORDER NUMBER -->
+  <div class="card">
+    <div class="card-header"><div class="num">1</div><h2>Order Number</h2></div>
+    <div class="card-body">
+      <label class="field-label" for="order-num">Enter order / docket number</label>
+      <input type="text" id="order-num" placeholder="e.g. ORD-1234" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="text">
+      <p class="helper">Found on your paper despatch docket.</p>
+    </div>
+  </div>
+
+  <!-- CARD 2: PHOTOS -->
+  <div class="card">
+    <div class="card-header"><div class="num">2</div><h2>Delivery Photos</h2></div>
+    <div class="card-body">
+
+      <!-- SIGNED DOCKET -->
+      <div class="photo-section">
+        <div class="photo-section-title">
+          Signed Docket
+          <span class="badge badge-optional" id="badge-signed">Optional</span>
+        </div>
+        <div class="camera-area" id="area-signed" onclick="triggerCamera('signed')">
+          <div class="cam-placeholder" id="ph-signed">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <p>Photo of signed docket</p>
+            <small>Tap here to open camera</small>
+          </div>
+          <div class="preview-badge hidden" id="badge-signed-ready">✓ Ready</div>
+          <img id="preview-signed" class="hidden" alt="Signed docket">
+        </div>
+        <input type="file" id="input-signed" accept="image/*" capture="environment">
+        <button class="btn btn-primary" id="btn-signed" onclick="triggerCamera('signed')">
+          <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4" fill="white"/></svg>
+          Take Photo of Signed Docket
+        </button>
+        <button class="btn btn-outline hidden" id="retake-signed" onclick="retakePhoto('signed')">↺ Retake</button>
+      </div>
+
+      <!-- ITEMS ON SITE -->
+      <div class="photo-section">
+        <div class="photo-section-title">
+          Items on Site
+          <span class="badge badge-optional" id="badge-unattended">Optional</span>
+        </div>
+        <div class="camera-area" id="area-unattended" onclick="triggerCamera('unattended')">
+          <div class="cam-placeholder" id="ph-unattended">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            <p>Photo of items on site</p>
+            <small>Tap here to open camera</small>
+          </div>
+          <div class="preview-badge hidden" id="badge-unattended-ready">✓ Ready</div>
+          <img id="preview-unattended" class="hidden" alt="Items on site">
+        </div>
+        <input type="file" id="input-unattended" accept="image/*" capture="environment">
+        <button class="btn btn-primary" id="btn-unattended" onclick="triggerCamera('unattended')">
+          <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4" fill="white"/></svg>
+          Take Photo of Items on Site
+        </button>
+        <button class="btn btn-outline hidden" id="retake-unattended" onclick="retakePhoto('unattended')">↺ Retake</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CARD 3: SEND -->
+  <div class="card send-card">
+    <div class="card-header"><div class="num">3</div><h2>Confirm &amp; Send</h2></div>
+    <div class="card-body">
+      <div class="send-summary">
+        <div class="summary-row">
+          <span class="s-label">Order #</span>
+          <span class="s-value waiting" id="sum-order">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="s-label">Signed Docket</span>
+          <span class="s-value waiting" id="sum-signed">Not taken</span>
+        </div>
+        <div class="summary-row">
+          <span class="s-label">Items on Site</span>
+          <span class="s-value waiting" id="sum-unattended">Not taken</span>
+        </div>
+      </div>
+      <button class="btn btn-send" id="btn-send" disabled onclick="sendDelivery()">
+        <svg viewBox="0 0 24 24" fill="white" width="26" height="26"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+        Send to Head Office
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<div class="success-screen" id="success-screen">
+  <div class="success-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+  <h2>Delivery Sent!</h2>
+  <div class="success-order" id="success-order-num"></div>
+  <p>Photos and confirmation emailed to head office automatically.</p>
+  <button class="btn-new" onclick="resetApp()">+ Next Delivery</button>
+</div>
+
+<div class="sending-overlay" id="sending-overlay">
+  <div class="spinner"></div>
+  <p>Sending to Head Office…</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let blobs = { signed: null, unattended: null };
+
+  const orderInput = document.getElementById('order-num');
+
+  orderInput.addEventListener('input', () => {
+    orderInput.classList.toggle('valid', orderInput.value.trim().length > 2);
+    updateSummary(); updateSteps();
+  });
+
+  function triggerCamera(type) {
+    document.getElementById('input-' + type).click();
+  }
+
+  ['signed','unattended'].forEach(type => {
+    document.getElementById('input-' + type).addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      blobs[type] = file;
+      const preview = document.getElementById('preview-' + type);
+      preview.src = URL.createObjectURL(file);
+      preview.classList.remove('hidden');
+      document.getElementById('ph-' + type).classList.add('hidden');
+      document.getElementById('badge-' + type + '-ready').classList.remove('hidden');
+      document.getElementById('area-' + type).classList.add('has-photo');
+      document.getElementById('btn-' + type).classList.add('hidden');
+      document.getElementById('retake-' + type).classList.remove('hidden');
+      document.getElementById('badge-' + type).textContent = '✓ Ready';
+      document.getElementById('badge-' + type).className = 'badge badge-ready';
+      updateSummary(); updateSteps();
+    });
+  });
+
+  function retakePhoto(type) {
+    blobs[type] = null;
+    const preview = document.getElementById('preview-' + type);
+    preview.classList.add('hidden');
+    preview.src = '';
+    document.getElementById('ph-' + type).classList.remove('hidden');
+    document.getElementById('badge-' + type + '-ready').classList.add('hidden');
+    document.getElementById('area-' + type).classList.remove('has-photo');
+    document.getElementById('btn-' + type).classList.remove('hidden');
+    document.getElementById('retake-' + type).classList.add('hidden');
+    document.getElementById('badge-' + type).textContent = 'Optional';
+    document.getElementById('badge-' + type).className = 'badge badge-optional';
+    document.getElementById('input-' + type).value = '';
+    updateSummary(); updateSteps();
+  }
+
+  function updateSummary() {
+    const ord = orderInput.value.trim().toUpperCase();
+    const sumOrd = document.getElementById('sum-order');
+    const sumSig = document.getElementById('sum-signed');
+    const sumUna = document.getElementById('sum-unattended');
+
+    sumOrd.textContent = ord || '—';
+    sumOrd.className = 's-value ' + (ord.length > 2 ? 'ok' : 'waiting');
+    sumSig.textContent = blobs.signed ? '✓ Ready' : 'Not taken';
+    sumSig.className = 's-value ' + (blobs.signed ? 'ok' : 'waiting');
+    sumUna.textContent = blobs.unattended ? '✓ Ready' : 'Not taken';
+    sumUna.className = 's-value ' + (blobs.unattended ? 'ok' : 'waiting');
+
+    // At least one photo required
+    const hasPhoto = blobs.signed || blobs.unattended;
+    document.getElementById('btn-send').disabled = !(ord.length > 2 && hasPhoto);
+  }
+
+  function updateSteps() {
+    const hasOrder = orderInput.value.trim().length > 2;
+    const hasPhoto = !!(blobs.signed || blobs.unattended);
+    setStep(1, hasOrder ? 'done' : 'active');
+    setStep(2, hasPhoto ? 'done' : (hasOrder ? 'active' : ''));
+    setStep(3, hasPhoto && hasOrder ? 'active' : '');
+    document.getElementById('ln1').classList.toggle('done', hasOrder);
+    document.getElementById('ln2').classList.toggle('done', hasPhoto && hasOrder);
+  }
+
+  function setStep(n, state) {
+    const num = document.getElementById('sn' + n);
+    const lbl = document.getElementById('sl' + n);
+    num.className = 'step-num' + (state === 'active' ? ' active' : state === 'done' ? ' done' : '');
+    lbl.className = 'step-label' + (state === 'active' ? ' active' : state === 'done' ? ' done' : '');
+    num.textContent = state === 'done' ? '✓' : n;
+  }
+
+  async function sendDelivery() {
+    const order = orderInput.value.trim();
+    if (!order || order.length < 2) { showToast('Enter an order number'); return; }
+    if (!blobs.signed && !blobs.unattended) { showToast('Take at least one photo'); return; }
+
+    document.getElementById('sending-overlay').classList.add('active');
+    try {
+      const formData = new FormData();
+      formData.append('orderNumber', order.toUpperCase());
+      formData.append('timestamp', new Date().toLocaleString('en-IE'));
+      if (blobs.signed)     formData.append('photoSigned',     blobs.signed,     'signed-docket.jpg');
+      if (blobs.unattended) formData.append('photoUnattended', blobs.unattended, 'items-on-site.jpg');
+
+      const res  = await fetch('/send-delivery', { method: 'POST', body: formData });
+      const data = await res.json();
+      document.getElementById('sending-overlay').classList.remove('active');
+      if (data.ok) {
+        document.getElementById('success-order-num').textContent = 'Order ' + order.toUpperCase();
+        document.getElementById('main-flow').style.display = 'none';
+        document.getElementById('success-screen').classList.add('visible');
+      } else {
+        showToast(data.error || 'Something went wrong. Please try again.');
+      }
+    } catch (err) {
+      document.getElementById('sending-overlay').classList.remove('active');
+      showToast('No connection. Check your signal and try again.');
+    }
+  }
+
+  function resetApp() {
+    orderInput.value = '';
+    orderInput.classList.remove('valid');
+    retakePhoto('signed');
+    retakePhoto('unattended');
+    document.getElementById('success-screen').classList.remove('visible');
+    document.getElementById('main-flow').style.display = '';
+    document.getElementById('btn-send').disabled = true;
+    setStep(1,'active'); setStep(2,''); setStep(3,'');
+    document.getElementById('ln1').classList.remove('done');
+    document.getElementById('ln2').classList.remove('done');
+    updateSummary();
+    window.scrollTo(0,0);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  updateSummary();
+</script>
+</body>
+</html>
