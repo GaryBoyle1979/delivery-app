@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const app    = express();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
+const uploadFields = upload.fields([{ name: 'photoSigned', maxCount: 1 }, { name: 'photoUnattended', maxCount: 1 }]);
 
 app.use(cors());
 app.use(express.json());
@@ -59,15 +60,15 @@ async function sendViaSendGrid(toEmail, fromEmail, subject, htmlBody, textBody, 
   });
 }
 
-app.post('/send-delivery', upload.single('photo'), async (req, res) => {
+app.post('/send-delivery', uploadFields, async (req, res) => {
   try {
-    const { orderNumber, photoType, timestamp } = req.body;
-    if (!orderNumber || !req.file) return res.status(400).json({ ok: false, error: 'Missing order number or photo.' });
+    const { orderNumber, timestamp } = req.body;
+    const photoSigned     = req.files && req.files['photoSigned']     ? req.files['photoSigned'][0]     : null;
+    const photoUnattended = req.files && req.files['photoUnattended'] ? req.files['photoUnattended'][0] : null;
+    if (!orderNumber || (!photoSigned && !photoUnattended)) return res.status(400).json({ ok: false, error: 'Missing order number or photo.' });
 
-    const typeLabel    = photoType === 'signed' ? 'Signed Docket' : 'Items on Site (Unattended)';
     const deliveryTime = timestamp || new Date().toLocaleString('en-IE');
-    const fileExt      = req.file.mimetype === 'image/png' ? 'png' : 'jpg';
-    const fileName     = `delivery-${orderNumber.toUpperCase()}-${Date.now()}.${fileExt}`;
+    const photoTypes   = [photoSigned ? 'Signed Docket' : null, photoUnattended ? 'Items on Site' : null].filter(Boolean).join(' + ');
 
     const subject  = `Delivery Confirmed — Order ${orderNumber.toUpperCase()} — ${typeLabel}`;
     const textBody = `DELIVERY CONFIRMATION\n${'='.repeat(40)}\n\nOrder Number : ${orderNumber.toUpperCase()}\nPhoto Type   : ${typeLabel}\nDate / Time  : ${deliveryTime}\n\nDelivery photo attached.\n\n— McMonagle Deliveries`;
@@ -106,7 +107,7 @@ app.post('/send-delivery', upload.single('photo'), async (req, res) => {
       req.file.buffer, fileName, req.file.mimetype
     );
 
-    console.log(`✓ Email sent via SendGrid | Order: ${orderNumber} | Type: ${typeLabel}`);
+    console.log(`✓ Email sent via SendGrid | Order: ${orderNumber} | Photos: ${photoTypes}`);
     res.json({ ok: true });
 
   } catch (err) {
