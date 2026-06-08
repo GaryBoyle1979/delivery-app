@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const app    = express();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
-const uploadFields = upload.fields([{ name: 'photoSigned', maxCount: 1 }, { name: 'photoUnattended', maxCount: 1 }, { name: 'photo', maxCount: 1 }]);
+const uploadFields = upload.any();
 
 app.use(cors());
 app.use(express.json());
@@ -63,9 +63,10 @@ async function sendViaSendGrid(toEmail, fromEmail, subject, htmlBody, textBody, 
 app.post('/send-delivery', uploadFields, async (req, res) => {
   try {
     const { orderNumber, timestamp } = req.body;
-    const photoSigned     = req.files && req.files['photoSigned']     ? req.files['photoSigned'][0]     : null;
-    const photoUnattended = req.files && req.files['photoUnattended'] ? req.files['photoUnattended'][0] : null;
-    const photoSingle     = req.files && req.files['photo']            ? req.files['photo'][0]            : null;
+    const allFiles = req.files || [];
+    const photoSigned     = allFiles.find(f => f.fieldname === 'photoSigned')     || null;
+    const photoUnattended = allFiles.find(f => f.fieldname === 'photoUnattended') || null;
+    const photoSingle     = allFiles.find(f => f.fieldname === 'photo')           || allFiles[0] || null;
     const anyPhoto = photoSigned || photoUnattended || photoSingle;
     if (!orderNumber || !anyPhoto) return res.status(400).json({ ok: false, error: 'Missing order number or photo.' });
 
