@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const app    = express();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
-const uploadFields = upload.fields([{ name: 'photoSigned', maxCount: 1 }, { name: 'photoUnattended', maxCount: 1 }]);
+const uploadFields = upload.fields([{ name: 'photoSigned', maxCount: 1 }, { name: 'photoUnattended', maxCount: 1 }, { name: 'photo', maxCount: 1 }]);
 
 app.use(cors());
 app.use(express.json());
@@ -65,10 +65,12 @@ app.post('/send-delivery', uploadFields, async (req, res) => {
     const { orderNumber, timestamp } = req.body;
     const photoSigned     = req.files && req.files['photoSigned']     ? req.files['photoSigned'][0]     : null;
     const photoUnattended = req.files && req.files['photoUnattended'] ? req.files['photoUnattended'][0] : null;
-    if (!orderNumber || (!photoSigned && !photoUnattended)) return res.status(400).json({ ok: false, error: 'Missing order number or photo.' });
+    const photoSingle     = req.files && req.files['photo']            ? req.files['photo'][0]            : null;
+    const anyPhoto = photoSigned || photoUnattended || photoSingle;
+    if (!orderNumber || !anyPhoto) return res.status(400).json({ ok: false, error: 'Missing order number or photo.' });
 
     const deliveryTime = timestamp || new Date().toLocaleString('en-IE');
-    const photoTypes   = [photoSigned ? 'Signed Docket' : null, photoUnattended ? 'Items on Site' : null].filter(Boolean).join(' + ');
+    const photoTypes   = [photoSigned ? 'Signed Docket' : null, photoUnattended ? 'Items on Site' : null, photoSingle ? 'Delivery Photo' : null].filter(Boolean).join(' + ') || 'Delivery Photo';
 
     const subject  = `Delivery Confirmed — Order ${orderNumber.toUpperCase()} — ${photoTypes}`;
     const textBody = `DELIVERY CONFIRMATION\n${'='.repeat(40)}\n\nOrder Number : ${orderNumber.toUpperCase()}\nPhoto Type   : ${photoTypes}\nDate / Time  : ${deliveryTime}\n\nDelivery photo attached.\n\n— McMonagle Deliveries`;
