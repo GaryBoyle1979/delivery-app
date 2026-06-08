@@ -70,8 +70,8 @@ app.post('/send-delivery', uploadFields, async (req, res) => {
     const deliveryTime = timestamp || new Date().toLocaleString('en-IE');
     const photoTypes   = [photoSigned ? 'Signed Docket' : null, photoUnattended ? 'Items on Site' : null].filter(Boolean).join(' + ');
 
-    const subject  = `Delivery Confirmed — Order ${orderNumber.toUpperCase()} — ${typeLabel}`;
-    const textBody = `DELIVERY CONFIRMATION\n${'='.repeat(40)}\n\nOrder Number : ${orderNumber.toUpperCase()}\nPhoto Type   : ${typeLabel}\nDate / Time  : ${deliveryTime}\n\nDelivery photo attached.\n\n— McMonagle Deliveries`;
+    const subject  = `Delivery Confirmed — Order ${orderNumber.toUpperCase()} — ${photoTypes}`;
+    const textBody = `DELIVERY CONFIRMATION\n${'='.repeat(40)}\n\nOrder Number : ${orderNumber.toUpperCase()}\nPhoto Type   : ${photoTypes}\nDate / Time  : ${deliveryTime}\n\nDelivery photo attached.\n\n— McMonagle Deliveries`;
     const htmlBody = `
       <div style="font-family:sans-serif;max-width:540px;margin:0 auto;">
         <div style="background:#2a2520;padding:20px 24px;">
@@ -86,7 +86,7 @@ app.post('/send-delivery', uploadFields, async (req, res) => {
             </tr>
             <tr>
               <td style="padding:10px 0;border-bottom:1px solid #c9bdb3;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#8c7b6b;">Photo Type</td>
-              <td style="padding:10px 0;border-bottom:1px solid #c9bdb3;font-size:15px;font-weight:600;color:#2a2520;">${typeLabel}</td>
+              <td style="padding:10px 0;border-bottom:1px solid #c9bdb3;font-size:15px;font-weight:600;color:#2a2520;">${photoTypes}</td>
             </tr>
             <tr>
               <td style="padding:10px 0;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#8c7b6b;">Date &amp; Time</td>
